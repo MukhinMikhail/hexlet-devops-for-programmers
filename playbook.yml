@@ -1,7 +1,9 @@
 - hosts: webservers
   vars:
-   nginx_port: 3200
-   root_dir: /usr/share/nginx/html
+    nginx_port: 3200
+    root_dir: /usr/share/nginx/html
+    server_name: "This is server {{ansible_facts['nodename']}}!"
+    date: "{{ '%d-%B-%Y' }}"  
   tasks:
     - name: install nginx
       ansible.builtin.apt:
@@ -9,14 +11,14 @@
         state: latest
       become: yes
 
-    - name: copy html
-      ansible.builtin.copy:
-        src: files/index.html
+    - name: copy html from template
+      ansible.builtin.template:
+        src: templates/index.html.j2
         dest: "{{root_dir}}/index.html"
       become: yes
 
 
-    - name: copy nginx.conf
+    - name: copy nginx.conf from template
       ansible.builtin.template:
         src: templates/nginx.conf.j2
         dest: /etc/nginx/nginx.conf
