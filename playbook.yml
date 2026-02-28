@@ -5,11 +5,20 @@
     server_name: "This is server {{ansible_facts['nodename']}}!"
     date: "{{ '%d-%B-%Y' }}"  
   tasks:
+    - name: install cowsay
+      ansible.builtin.apt:
+        name: cowsay
+        state: latest
+      become: yes
     - name: install nginx
       ansible.builtin.apt:
         name: nginx
         state: latest
       become: yes
+
+    - name: cowsay result
+      ansible.builtin.shell: cowsay "Hello World"
+      register: cowsay_result 
 
     - name: copy html from template
       ansible.builtin.template:
